@@ -1,26 +1,31 @@
 import React from 'react';
-import ReactDOM from 'react-dom'
-import {Provider} from 'react-redux'
-import {createStore, applyMiddleware, compose } from 'redux'
-import { browserHistory } from 'react-router'
-import thunk from 'redux-thunk'
-import rootReducer from './reducers'
-import { WrapperApp } from './App'
+import ReactDOM from 'react-dom';
+import { createStore } from 'redux';
+import { Provider } from 'react-redux';
+import { Router, Route, IndexRoute, browserHistory } from 'react-router';
+import rootReducer from './reducers';
+import App from './components/App';
+import MoviesPage from './containers/MoviesPage';
+import MoviesNew from './containers/MoviesNew';
+import MoviesAbout from './components/MoviesAbout';
+import MoviesShow from './containers/MoviesShow';
 
-// const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
-// const middlewares = [thunk, ]
+const initialState = {
+  movies: [
+    { id: 1, title: 'A River Runs Through It' }
+  ]
+};
 
-const store = createStore(
-  rootReducer,
-  compose(
-    applyMiddleware(thunk),
-    window.devToolsExtension ? window.devToolsExtension() : f => f
-  )
-)
+const store = createStore(rootReducer, initialState);
 
 ReactDOM.render(
-  <Provider store={store}>
-    <WrapperApp />
+  <Provider store={store} >
+    <Router history={browserHistory} >
+      <Route path="/" component={App} />
+      <Route path='/movies' component={MoviesPage}>
+        <Route path="/movies/:id" component={MoviesShow} />
+      </Route>
+    </Router>
   </Provider>,
   document.getElementById('container')
 );
